@@ -49,7 +49,7 @@ Automatizar processos acadêmicos como matrículas, lançamento de notas e gera�
 | Edson Silveira      | Frontend       | edsonsilveira619@gmail.com           |
 | Cleverson Mozer        | Backend             | x@gmail.com          |
 | Mauricio Bairos    | Modelagem do BD               | x@gmail.com         |
-| Tiago da Luz    | Modelagem do BD               | x@gmail.com         |
+| Tiago da Luz    | Modelagem do BD               | tiagoluz752@gmail.com         |
 
 ## 🗃️ Modelagem do Banco
 ### Diagrama ER
