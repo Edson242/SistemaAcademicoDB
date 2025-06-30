@@ -10,7 +10,6 @@ Um sistema de banco de dados para gerenciar matrículas, notas e frequência em 
 - [Modelagem do Banco](#-modelagem-do-banco)
   - [Diagrama ER](#diagrama-er)
   - [Script SQL](#script-sql)
-- [Como Executar](#-como-executar)
 - [Licença](#-licença)
 
 ## 🎯 Objetivo
