@@ -46,7 +46,7 @@ Automatizar processos acadêmicos como matrículas, lançamento de notas e gera�
 
 ## 🗃️ Modelagem do Banco
 ### Diagrama ER
-![Diagrama ER do Sistema Acadêmico](docs/diagrama_er.png)
+![Diagrama ER do Sistema Acadêmico](diagrama_er.png)
 
 ### Script SQL
 ```sql
