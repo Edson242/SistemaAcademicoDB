@@ -30,26 +30,19 @@ Automatizar processos acadêmicos como matrículas, lançamento de notas e gera�
 ## 💻 Tecnologias
 **Banco de Dados**:
 - ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-- ![QuickDBD](https://img.shields.io/badge/QuickDBD-FF6C37?style=for-the-badge)
-
-**Backend**:
-- ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) + Flask
-- ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-FF6C37?style=for-the-badge)
-
-**Frontend**:
-- ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
 **Ferramentas**:
 - ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-- ![Draw.io](https://img.shields.io/badge/Draw.io-FF6C37?style=for-the-badge)
+- ![Visual Paradigm](https://img.shields.io/badge/Visual%20Paradigm-FFB400?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCAxMjggMTI4IiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxnPjxwYXRoIGZpbGw9IiNGRkI0MDAiIGQ9Ik04OC40IDQ3LjMgNzUuMiAzMy45bC00MS42IDQxLjVMMzkuNSA3Mi4zIDUyLjYgODUuN2w0MS43LTQxLjRMODguNCA0Ny4zeiIvPjxwYXRoIGZpbGw9IiM2NjYiIGQ9Ik01Mi42IDg1LjdsMTMuMyAxMy4yIDEzLjMtMTMuMi0xMy4zLTEzLjMtMTMuMyAxMy4zem0tMy4xIDMuMmwzLjEtMy4yIDMuMiAzLjItMy4xIDMuMi0zLjItMy4yek04OC40IDQ3LjNsLTQxLjcgNDEuNC0xMy4xLTEzLjJMMzkuNSA3Mi4zIDUyLjYgODUuN2w0MS43LTQxLjRMODguNCA0Ny4zeiIvPjwvZz48L3N2Zz4=)
+
 
 ## 👥 Equipe
-| Nome               | Função                | Contato                  |
-|--------------------|-----------------------|--------------------------|
-| Edson Silveira      | Frontend       | edsonsilveira619@gmail.com           |
-| Cleverson Mozer        | Backend             | x@gmail.com          |
-| Mauricio Bairos    | Modelagem do BD               | x@gmail.com         |
-| Tiago da Luz    | Modelagem do BD               | x@gmail.com         |
+| Nome               |
+|--------------------|
+| Edson Silveira      |
+| Cleverson Mozer        |
+| Mauricio Bairos    | 
+| Tiago da Luz    | 
 
 ## 🗃️ Modelagem do Banco
 ### Diagrama ER
@@ -57,42 +50,36 @@ Automatizar processos acadêmicos como matrículas, lançamento de notas e gera�
 
 ### Script SQL
 ```sql
--- Exemplo: Tabela de Alunos
-CREATE TABLE aluno (
-    id SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    cpf VARCHAR(14) UNIQUE,
-    email VARCHAR(100) UNIQUE
+-- Tabela: Escola
+CREATE TABLE Escola (
+    idesc SERIAL PRIMARY KEY,
+    nomesc VARCHAR(100) NOT NULL,
+    endesc VARCHAR(100),
+    idpro INT
 );
 
--- Tabela de Matrículas (Relacionamento N:M)
-CREATE TABLE matricula (
-    id_aluno INTEGER REFERENCES aluno(id),
-    id_disciplina INTEGER REFERENCES disciplina(id),
-    ano_semestre VARCHAR(6) NOT NULL,
-    PRIMARY KEY (id_aluno, id_disciplina, ano_semestre)
+-- Tabela: Aluno
+CREATE TABLE Aluno (
+    idalu SERIAL PRIMARY KEY,
+    nomalu VARCHAR(100) NOT NULL,
+    CPFalu VARCHAR(14) UNIQUE NOT NULL,
+    emailalu VARCHAR(100) UNIQUE NOT NULL,
+    idesc INT NOT NULL,
+    idhist BIGINT,
+    FOREIGN KEY (idesc) REFERENCES Escola(idesc) ON DELETE CASCADE
+);
+
+-- Tabela: Disciplina
+CREATE TABLE Disciplina (
+    id_dis SERIAL PRIMARY KEY,
+    nomdis VARCHAR(100) NOT NULL,
+    perdis VARCHAR(40),
+    idesc INT NOT NULL,
+    idalu INT,
+    FOREIGN KEY (idesc) REFERENCES Escola(idesc) ON DELETE CASCADE,
+    FOREIGN KEY (idalu) REFERENCES Aluno(idalu)
 );
 ```
-
-## 🚀 Como Executar
-1. **Pré-requisitos**:
-   - PostgreSQL 14+
-   - Python 3.10+
-
-2. **Instalação**:
-   ```bash
-   git clone https://github.com/seu-usuario/sistema-academico.git
-   cd sistema-academico
-   pip install -r requirements.txt
-   ```
-
-3. **Configuração**:
-   - Renomeie `.env.example` para `.env` e preencha com suas credenciais do banco.
-
-4. **Execução**:
-   ```bash
-   python app.py
-   ```
 
 ## 📄 Licença
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
