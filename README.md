@@ -1,4 +1,4 @@
-# 🎓 Sistema de Gestão Acadêmica (SGA)
+# 🎓 Gestão Acadêmica Integrada e Automatizada (GAIA)
 
 Um sistema de banco de dados para gerenciar matrículas, notas e frequência em instituições de ensino, desenvolvido como trabalho acadêmico para a disciplina de Banco de Dados.
 
