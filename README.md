@@ -25,7 +25,7 @@ Automatizar processos acadêmicos como matrículas, lançamento de notas e gera�
 | Cadastros       | Alunos, professores, disciplinas e turmas                                |
 | Matrículas      | Validação de pré-requisitos e lotação de turmas                          |
 | Notas/Frequência| Lançamento com cálculos automáticos (médias, situações)                  |
-| Relatórios      | Boletins, listas de classe, histórico escolar                            |
+| Relatórios      | Alunos Matriculados, Notas de um Aluno, Frequência dos Alunos em uma Disciplina e Resumo de Aprovação por Disciplina e Período |
 
 ## 💻 Tecnologias
 **Banco de Dados**:
