@@ -50,25 +50,10 @@ Automatizar processos acadêmicos como matrículas, lançamento de notas e gera�
 
 ### Script SQL
 ```sql
--- Tabela: Escola
 CREATE TABLE Escola (
     idesc SERIAL PRIMARY KEY,
     nomesc VARCHAR(100) NOT NULL,
     endesc VARCHAR(100),
-    idpro INT
-);
-
--- Tabela: Aluno
--- Criação do banco de dados
-CREATE DATABASE sistema_academico_integrado;
-\c sistema_academico_integrado;
-
--- Tabela: Escola
-CREATE TABLE Escola (
-    idesc SERIAL PRIMARY KEY,
-    nomesc VARCHAR(100) NOT NULL,
-    endesc VARCHAR(100),
-    idpro INT
 );
 
 -- Tabela: Aluno
@@ -77,9 +62,9 @@ CREATE TABLE Aluno (
     nomalu VARCHAR(100) NOT NULL,
     CPFalu VARCHAR(14) UNIQUE NOT NULL,
     emailalu VARCHAR(100) UNIQUE NOT NULL,
-    idesc INT NOT NULL,
-    idhist BIGINT,
-    FOREIGN KEY (idesc) REFERENCES Escola(idesc) ON DELETE CASCADE
+    idesc BIGINT UNSIGNED NOT NULL,
+    idhist BIGINT UNSIGNED,
+    FOREIGN KEY (idesc) REFERENCES Escola(idesc) ON DELETE cascade
 );
 
 -- Tabela: Disciplina
@@ -87,11 +72,19 @@ CREATE TABLE Disciplina (
     id_dis SERIAL PRIMARY KEY,
     nomdis VARCHAR(100) NOT NULL,
     perdis VARCHAR(40),
-    idesc INT NOT NULL,
-    idalu INT,
-    FOREIGN KEY (idesc) REFERENCES Escola(idesc) ON DELETE CASCADE,
-    FOREIGN KEY (idalu) REFERENCES Aluno(idalu)
+    idesc BIGINT UNSIGNED NOT NULL,
+    FOREIGN KEY (idesc) REFERENCES Escola(idesc) ON DELETE CASCADE
 );
+
+-- Tabela: Aluno_Disciplina
+CREATE TABLE Aluno_Disciplina (
+    idalu BIGINT UNSIGNED NOT NULL,
+    id_dis BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (idalu, id_dis),
+    FOREIGN KEY (idalu) REFERENCES Aluno(idalu) ON DELETE CASCADE,
+    FOREIGN KEY (id_dis) REFERENCES Disciplina(id_dis) ON DELETE CASCADE
+);
+
 
 -- Tabela: Professor
 CREATE TABLE Professor (
@@ -99,22 +92,28 @@ CREATE TABLE Professor (
     nomepro VARCHAR(100) NOT NULL,
     emailpro VARCHAR(100) UNIQUE NOT NULL,
     cpfpro VARCHAR(14) UNIQUE NOT NULL,
-    idesc INT NOT NULL,
-    id_dis INT,
-    idalu INT,
+    idesc BIGINT UNSIGNED NOT NULL,
     FOREIGN KEY (idesc) REFERENCES Escola(idesc),
-    FOREIGN KEY (id_dis) REFERENCES Disciplina(id_dis),
-    FOREIGN KEY (idalu) REFERENCES Aluno(idalu)
 );
+
+-- Tabela: Professor_Escola
+CREATE TABLE Professor_Escola (
+    idpro BIGINT UNSIGNED NOT NULL,
+    idesc BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (idpro, idesc),
+    FOREIGN KEY (idpro) REFERENCES Professor(idpro) ON DELETE CASCADE,
+    FOREIGN KEY (idesc) REFERENCES Escola(idesc) ON DELETE CASCADE
+);
+
 
 -- Tabela: Matricula
 CREATE TABLE Matricula (
     idmat SERIAL PRIMARY KEY,
     anosem VARCHAR(6) NOT NULL CHECK (char_length(anosem) = 6),
     datmat DATE NOT NULL,
-    idalu INT NOT NULL,
-    idesc INT NOT NULL,
-    idpro INT NOT NULL,
+    idalu BIGINT UNSIGNED NOT NULL,
+    idesc BIGINT UNSIGNED NOT NULL,
+    idpro BIGINT UNSIGNED NOT NULL,
     FOREIGN KEY (idalu) REFERENCES Aluno(idalu),
     FOREIGN KEY (idesc) REFERENCES Escola(idesc),
     FOREIGN KEY (idpro) REFERENCES Professor(idpro)
@@ -122,15 +121,15 @@ CREATE TABLE Matricula (
 
 -- Tabela: Historico
 CREATE TABLE Historico (
-    idhist BIGSERIAL PRIMARY KEY,
+    idhist SERIAL PRIMARY KEY,
     anosem INT NOT NULL,
     nota_final INT CHECK (nota_final BETWEEN 0 AND 100),
     faltas INT CHECK (faltas >= 0),
     percentual_presenca INT CHECK (percentual_presenca BETWEEN 0 AND 100),
     status INT CHECK (status IN (0, 1)), -- 1 = Aprovado, 0 = Reprovado
-    idalu2 INT NOT NULL,
-    id_dis INT NOT NULL,
-    FOREIGN KEY (idalu2) REFERENCES Aluno(idalu),
+    idalu BIGINT UNSIGNED NOT NULL,
+    id_dis BIGINT UNSIGNED NOT NULL,
+    FOREIGN KEY (idalu) REFERENCES Aluno(idalu),
     FOREIGN KEY (id_dis) REFERENCES Disciplina(id_dis)
 );
 ```
@@ -172,13 +171,14 @@ ORDER BY h.anosem DESC;
 ### 🔹 Frequência dos Alunos em uma Disciplina
 ```sql
 SELECT 
-    a.nomalu AS "Nome do Aluno",
-    h.faltas AS "Faltas",
-    h.percentual_presenca AS "Presença (%)"
-FROM Historico h
-JOIN Aluno a ON a.idalu = h.idalu
-WHERE h.id_dis = ? -- Substitua pelo ID da disciplina
-ORDER BY h.percentual_presenca DESC;
+  a.nomalu AS "Nome do Aluno",
+  COALESCE(h.faltas, 0) AS "Faltas",
+  COALESCE(h.percentual_presenca, 0) AS "Presença (%)"
+FROM Aluno_Disciplina ad
+JOIN Aluno a ON a.idalu = ad.idalu
+LEFT JOIN Historico h ON h.idalu = a.idalu AND h.id_dis = ad.id_dis
+WHERE ad.id_dis = ?  -- Substitua pelo ID da disciplina
+ORDER BY "Presença (%)" DESC;
 ```
 
 ### 🔹 Resumo de Aprovação por Disciplina e Semestre
@@ -187,11 +187,11 @@ SELECT
     d.nomdis AS "Disciplina",
     h.anosem AS "Semestre",
     COUNT(*) AS "Total Matriculados",
-    SUM(CASE WHEN h.status = 'Aprovado' THEN 1 ELSE 0 END) AS "Aprovados",
-    SUM(CASE WHEN h.status = 'Reprovado' THEN 1 ELSE 0 END) AS "Reprovados"
+    SUM(CASE WHEN h.status = 1 THEN 1 ELSE 0 END) AS "Aprovados",
+    SUM(CASE WHEN h.status = 0 THEN 1 ELSE 0 END) AS "Reprovados"
 FROM Historico h
 JOIN Disciplina d ON d.id_dis = h.id_dis
-WHERE h.anosem = '2024-2' -- Substitua pelo semestre desejado
+WHERE h.anosem = '' -- Substitua pelo semestre desejado
 GROUP BY d.nomdis, h.anosem
 ORDER BY "Total Matriculados" DESC;
 ```
