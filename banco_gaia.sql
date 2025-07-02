@@ -7,7 +7,6 @@ CREATE TABLE Escola (
     idesc SERIAL PRIMARY KEY,
     nomesc VARCHAR(100) NOT NULL,
     endesc VARCHAR(100),
-    idpro INT
 );
 
 -- Tabela: Aluno
